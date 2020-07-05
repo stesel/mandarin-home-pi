@@ -1,16 +1,24 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import * as serviceWorker from './serviceWorker';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import { App } from "./components/app/App";
+import * as serviceWorker from "./serviceWorker";
+import { registerWS } from "./services/webSocket";
+import { userAuthentication } from "./services/login";
 
-ReactDOM.render(
-  <React.StrictMode>
-    HELLO
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+async function authenticate() {
+    const success = await userAuthentication();
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+    if (success) {
+        ReactDOM.render(<App />, document.getElementById("root"));
+        registerWS();
+    }
+
+    return success;
+}
+
+authenticate().then(authenticated => {
+    console.log("authenticated", authenticated);
+});
+
+serviceWorker.register();

@@ -10,6 +10,8 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "mobx": "^5.15.4",
+    "mobx-react": "^6.2.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
@@ -25,6 +27,7 @@
     "@typescript-eslint/parser": "^3.5.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-config-react": "^1.1.7",
+    "mobx-react-devtools": "^6.1.1",
     "react-scripts": "3.4.1",
     "typescript": "^3.9.6"
   },

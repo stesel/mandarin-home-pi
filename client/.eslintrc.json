@@ -11,6 +11,7 @@
     "jest": true
   },
   "rules": {
+    "no-console": 1
   },
   "settings": {
     "react": {
