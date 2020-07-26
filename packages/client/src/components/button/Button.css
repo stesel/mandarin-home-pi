@@ -1,0 +1,39 @@
+button {
+    display: inline-block;
+    border: none;
+    padding: 0.5em 1em;
+    margin: 0.3em;
+    text-decoration: none;
+    text-shadow: 1px 1px 1px #333;
+    background-color: #1f85a8;
+    color: #fff;
+    font-family: sans-serif;
+    font-size: 1em;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 250ms ease-in-out,
+    transform 150ms ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border-radius: 1em;
+    user-select: none;
+}
+
+button:hover {
+    box-shadow: 0 0 1px #2196F3;
+    background-color: #2FB9F1;
+}
+
+button:focus {
+    outline: none;
+}
+
+button:active {
+    transform: scale(0.95);
+    background-color: #2FB9F1;
+}
+
+button:disabled {
+    cursor: default;
+    background-color: #CCC;
+}

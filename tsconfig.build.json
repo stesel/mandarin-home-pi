@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.common.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@mandarin-home-pi/common": ["packages/common/esm"],
+      "@mandarin-home-pi/common/*": ["packages/common/esm/*"]
+    }
+  }
+}

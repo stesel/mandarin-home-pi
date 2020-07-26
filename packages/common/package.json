@@ -1,0 +1,9 @@
+{
+  "name": "@mandarin-home-pi/common",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "rimraf ./build && tsc",
+    "lint": "eslint . --ext .ts",
+    "test": "jest --detectOpenHandles --passWithNoTests --colors"
+  }
+}

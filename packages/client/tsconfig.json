@@ -1,0 +1,38 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "es5",
+    "experimentalDecorators": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "../common/src/**/*.ts",
+    "../common/src/consts/index.ts"
+  ],
+  "baseUrl": ".",
+  "paths": {
+    "@mandarin-home-pi/common": [
+      "../common/src"
+    ],
+    "@mandarin-home-pi/common/*": [
+      "../common/src/*"
+    ]
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

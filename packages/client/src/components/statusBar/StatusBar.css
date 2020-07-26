@@ -1,0 +1,16 @@
+.statusBar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: auto;
+    height: 1em;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    margin: 0.2em;
+}
+
+.space {
+    width: 0.2em;
+    height: 100%;
+}

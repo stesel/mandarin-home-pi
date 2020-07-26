@@ -1,0 +1,14 @@
+{
+  "name": "@mandarin-home-pi/client-pi",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon",
+    "build": "rimraf ./build && tsc",
+    "lint": "eslint . --ext .ts",
+    "test": "jest --detectOpenHandles --passWithNoTests --colors"
+  },
+  "dependencies": {
+    "@mandarin-home-pi/common": "^1.0.0"
+  }
+}
