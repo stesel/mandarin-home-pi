@@ -1,3 +1,12 @@
+export enum RepeatType {
+    Never = "Never",
+    EveryDay = "EveryDay",
+    EverySecondDay = "EverySecondDay",
+    EveryThirdDay = "EveryThirdDay",
+    EveryFourthDay = "EveryFourthDay",
+    EveryFifthDay = "EveryFifthDay",
+}
+
 export enum StartTimeType {
     Zero = "00:00",
     One ="01:00",

@@ -1,8 +1,9 @@
 {
   "name": "@mandarin-home-pi/common",
   "version": "1.0.0",
+  "main": "./esm/index.js",
   "scripts": {
-    "build": "rimraf ./build && tsc",
+    "build": "rimraf ./esm && tsc -p tsconfig.build.json",
     "lint": "eslint . --ext .ts",
     "test": "jest --detectOpenHandles --passWithNoTests --colors"
   }

@@ -1,7 +1,7 @@
 import React from "react";
-import { RepeatType } from "../../../consts/RepeatType";
 import { Select } from "../../select/Select";
 import { useScheduleRepeat } from "../../hooks";
+import { RepeatType } from "@mandarin-home-pi/common";
 
 const allRepeatTypes: RepeatType[] = Object.values(RepeatType);
 

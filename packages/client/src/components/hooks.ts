@@ -4,11 +4,11 @@ import {
     ConnectionStore,
     PumpingSchedule,
     PumpingStore,
+    RepeatType,
+    StartTimeType,
     Stores,
     UIStore,
 } from "@mandarin-home-pi/common";
-import { RepeatType } from "../consts/RepeatType";
-import { StartTimeType } from "../consts/StartTime";
 
 export function useStores(): Stores {
     return React.useContext<Stores>(MobXProviderContext as unknown as React.Context<Stores>)
@@ -35,12 +35,12 @@ export function usePumpingSchedule(): PumpingStore {
 
 export function useScheduleRepeat(): RepeatType {
     const { schedule } = usePumpingSchedule();
-    return useObserver<RepeatType>(() => schedule.repeat);
+    return useObserver<RepeatType>(() => schedule.repeat as RepeatType);
 }
 
 export function useScheduleStartTime(): StartTimeType {
     const { schedule } = usePumpingSchedule();
-    return useObserver<StartTimeType>(() => schedule.startTime);
+    return useObserver<StartTimeType>(() => schedule.startTime as StartTimeType);
 }
 
 export function useUI(): UIStore {

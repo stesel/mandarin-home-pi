@@ -5,6 +5,9 @@ import bodyParser from "body-parser";
 import { env } from "./env";
 import { registerWSServer } from "./servicers/webSocketServer";
 import { userAuthentication } from "./servicers/loginService";
+import { StartTimeType } from "@mandarin-home-pi/common";
+
+console.log(StartTimeType.Nine);
 
 const app = express();
 

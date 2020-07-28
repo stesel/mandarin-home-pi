@@ -10,6 +10,10 @@ import {
 export const pumping: PumpingStore = {
     isPumping: observable.box(false),
     changePumping: observable.box(false),
+    schedule: observable.object({
+        repeat: "",
+        startTime: "",
+    }),
 };
 
 reaction(() => pumping.changePumping.get(), value => {

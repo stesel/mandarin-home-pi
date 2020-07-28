@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Select } from "../../select/Select";
-import { StartTimeType } from "../../../consts/StartTime";
 import { useScheduleStartTime } from "../../hooks";
+import { StartTimeType } from "@mandarin-home-pi/common";
 
 const allStartTimes = Object.values(StartTimeType);
 

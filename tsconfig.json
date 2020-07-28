@@ -4,7 +4,13 @@
     "baseUrl": ".",
     "paths": {
       "@mandarin-home-pi/common": ["packages/common/src"],
-      "@mandarin-home-pi/common/*": ["packages/common/src/*"]
+      "@mandarin-home-pi/common/*": ["packages/common/src/*"],
+      "@mandarin-home-pi/server": ["packages/server/src"],
+      "@mandarin-home-pi/server/*": ["packages/server/src/*"],
+      "@mandarin-home-pi/client": ["packages/client/src"],
+      "@mandarin-home-pi/client/*": ["packages/client/src/*"],
+      "@mandarin-home-pi/client-pi": ["packages/client-pi/src"],
+      "@mandarin-home-pi/client-pi/*": ["packages/client-pi/src/*"]
     }
   }
 }
