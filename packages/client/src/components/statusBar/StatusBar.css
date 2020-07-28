@@ -8,6 +8,7 @@
     align-content: center;
     align-items: center;
     margin: 0.2em;
+    user-select: none;
 }
 
 .space {
