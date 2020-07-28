@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon",
-    "build": "rimraf ./build && tsc",
+    "build": "rimraf ./build && webpack",
     "lint": "eslint . --ext .ts",
     "test": "jest --detectOpenHandles --passWithNoTests --colors"
   },

@@ -13,6 +13,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "noEmit": false,
     "baseUrl": ".",
     "paths": {
       "@mandarin-home-pi/common": ["../common/src"],

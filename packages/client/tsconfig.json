@@ -20,8 +20,7 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "../common/src/**/*.ts",
-    "../common/src/consts/index.ts"
+    "../common/src/**/*.ts"
   ],
   "baseUrl": ".",
   "paths": {
