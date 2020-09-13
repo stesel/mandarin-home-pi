@@ -1,18 +1,12 @@
-import {
-    action,
-    IObservableValue,
-} from "mobx";
-import { observer } from "mobx-react";
 import * as React from "react";
 import "./Toggle.css";
 
 export interface ToggleProps {
-    value: IObservableValue<boolean>
-    changeValue: IObservableValue<boolean>;
+    value: boolean;
+    changeValue: (value: boolean) => void;
     title: string;
 }
 
-@observer
 export class Toggle extends React.PureComponent<ToggleProps> {
 
     public render() {
@@ -22,7 +16,7 @@ export class Toggle extends React.PureComponent<ToggleProps> {
                 <p className="toggle-title">{title}</p>
                 <label className="toggle">
                     <input
-                        checked={value.get()}
+                        checked={value}
                         onChange={this.onChange}
                         type="checkbox"
                         className="toggle-input"
@@ -33,9 +27,7 @@ export class Toggle extends React.PureComponent<ToggleProps> {
         );
     }
 
-    @action("Toggle Component Change")
     private onChange = () => {
-        this.props.changeValue.set(!this.props.value.get());
+        this.props.changeValue(!this.props.value);
     }
-
 }

@@ -1,3 +1,4 @@
+import { configure } from "mobx";
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
@@ -5,6 +6,8 @@ import { App } from "./components/app/App";
 import * as serviceWorker from "./serviceWorker";
 import { registerWS } from "./services/webSocket";
 import { userAuthentication } from "./services/login";
+
+configure({ enforceActions: "observed" });
 
 async function authenticate() {
     const success = await userAuthentication();

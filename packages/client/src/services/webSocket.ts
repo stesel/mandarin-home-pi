@@ -1,14 +1,13 @@
 import {
-    action,
-    autorun,
     reaction,
-    transaction,
+    runInAction,
 } from "mobx";
 import { pumping } from "../store/pumping";
 import {
     ClientUpdateStateMessage,
     IncomingClientMessage,
     OutgoingClientMessage,
+    PumpingStore,
     ServerSendShotMessage,
     ServerUpdateStateMessage,
 } from "@mandarin-home-pi/common";
@@ -22,13 +21,18 @@ import { createPingPong } from "./pingPong";
 const { startPing, stopPing, handlePong } = createPingPong();
 
 function serverUpdateStateHandler(message: ServerUpdateStateMessage) {
-    console.log("PONG:", message.payload.timestamp);
-    transaction(() => {
-        if (pumping.isPumping.get() !== message.payload.pumping) {
-            pumping.isPumping.set(message.payload.pumping);
+    runInAction(() => {
+        if (pumping.isPumping.get() !== message.payload.isPumping) {
+            pumping.isPumping.set(message.payload.isPumping);
         }
-        if (connection.isPiConnected.get() !== message.payload.connected) {
-            connection.isPiConnected.set(message.payload.connected);
+        if(pumping.repeat.get() !== message.payload.repeat) {
+            pumping.repeat.set(message.payload.repeat);
+        }
+        if(pumping.startTime.get() !== message.payload.startTime) {
+            pumping.startTime.set(message.payload.startTime);
+        }
+        if (connection.isPiConnected.get() !== message.payload.isConnected) {
+            connection.isPiConnected.set(message.payload.isConnected);
         }
     });
 }
@@ -56,12 +60,13 @@ const parseWSData = (data: string) => {
     }
 };
 
-function updateStateRequest(pumping: boolean): ClientUpdateStateMessage {
+function updateStateRequest(pumping: PumpingStore): ClientUpdateStateMessage {
     return {
         type: "mhp.client.updateState",
         payload: {
-            pumping: pumping,
-            schedule: { repeat: "never", startTime: 12 },
+            isPumping: pumping.isPumping.get(),
+            repeat: pumping.repeat.get(),
+            startTime: pumping.startTime.get(),
             timestamp: Date.now(),
         }
     };
@@ -129,6 +134,6 @@ export const registerWS = () => {
 
     reaction(
         () => pumping.changePumping.get(),
-        value => sendMessage(updateStateRequest(value)),
+        () => sendMessage(updateStateRequest(pumping)),
     );
 };

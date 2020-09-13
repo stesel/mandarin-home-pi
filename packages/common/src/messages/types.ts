@@ -1,3 +1,7 @@
+import {
+    RepeatType,
+    StartTimeType,
+} from "@mandarin-home-pi/common/schedule/consts";
 
 export interface GenericPayload {
     timestamp: number;
@@ -9,9 +13,10 @@ export interface GenericMessage<T extends string, P extends {} = {}> {
 }
 
 export type ServerUpdateStateMessage = GenericMessage<"mhp.server.updateState", {
-    connected: boolean;
-    pumping: boolean;
-    timeRemaining: number;
+    isPumping: boolean;
+    repeat: RepeatType;
+    startTime: StartTimeType;
+    isConnected: boolean;
 }>;
 
 export type ServerTakeShotMessage = GenericMessage<"mhp.server.takeShot">;
@@ -21,7 +26,7 @@ export type ServerSendShotMessage = GenericMessage<"mhp.server.sendShot", {
 }>;
 
 export type PiUpdateStateMessage = GenericMessage<"mhp.pi.updateState", {
-    pumping: boolean;
+    isPumping: boolean;
     timeRemaining: number;
 }>;
 
@@ -30,11 +35,9 @@ export type PiSendShotMessage = GenericMessage<"mhp.pi.sendShot", {
 }>;
 
 export type ClientUpdateStateMessage = GenericMessage<"mhp.client.updateState", {
-    pumping: boolean;
-    schedule: {
-        repeat: "never" | "everyday";
-        startTime: number,
-    };
+    isPumping: boolean;
+    repeat: RepeatType;
+    startTime: StartTimeType;
 }>;
 
 export type ClientTakeShotMessage = GenericMessage<"mhp.client.takeShot">;

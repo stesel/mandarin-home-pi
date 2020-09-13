@@ -1,8 +1,10 @@
 import React from "react";
 
 import "./ConnectionIcon.css";
-import { useConnection } from "../../hooks";
-import { observer } from "mobx-react";
+import {
+    useIsPiConnected,
+    useIsServerConnected,
+} from "../../hooks";
 
 const borderColor = "#ffffff";
 
@@ -35,11 +37,12 @@ const Icon: React.FC<{ color: IconColor }> = ({ color }) => {
     )
 }
 
-export const ConnectionIcon: React.FC = observer(() => {
-    const { isServerConnected, isPiConnected } = useConnection();
+export const ConnectionIcon: React.FC = () => {
+    const isServerConnected = useIsServerConnected();
+    const isPiConnected = useIsPiConnected();
     return (
         <div className="connectionIcon">
-            <Icon color={getStatusColor(isServerConnected.get(), isPiConnected.get())}/>
+            <Icon color={getStatusColor(isServerConnected, isPiConnected)}/>
         </div>
     );
-});
+};

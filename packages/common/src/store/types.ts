@@ -1,7 +1,8 @@
 import {
-    IObservableObject,
-    IObservableValue,
-} from "mobx";
+    RepeatType,
+    StartTimeType,
+} from "@mandarin-home-pi/common/schedule/consts";
+import { IObservableValue } from "mobx";
 
 export interface ConnectionStore {
     isServerConnected: IObservableValue<boolean>;
@@ -9,15 +10,11 @@ export interface ConnectionStore {
     connectionLatency: IObservableValue<number>;
 }
 
-export interface PumpingSchedule {
-    repeat: string;
-    startTime: string;
-}
-
 export interface PumpingStore {
     isPumping: IObservableValue<boolean>;
+    repeat: IObservableValue<RepeatType>;
+    startTime: IObservableValue<StartTimeType>;
     changePumping: IObservableValue<boolean>;
-    schedule: PumpingSchedule & IObservableObject;
 }
 
 export interface UIStore {

@@ -1,18 +1,32 @@
-import { transaction } from "mobx";
+import { runInAction } from "mobx";
+import { connection } from "../store/connection";
 import { pumping } from "../store/pumping";
 import { Server } from "http";
 import {
     ClientTakeShotMessage,
     ClientUpdateStateMessage,
+    ConnectionStore,
     IncomingServerMessage,
     OutgoingServerMessage,
     PingMessage,
     PongMessage,
+    PumpingStore,
+    ServerUpdateStateMessage,
 } from "@mandarin-home-pi/common";
 import WebSocket = require("ws");
 
+let clients: WebSocket[] = [];
+
 function sendMessage(ws: WebSocket, message: OutgoingServerMessage) {
     ws.send(JSON.stringify(message));
+}
+
+function sendMessageToAll(message: OutgoingServerMessage) {
+    clients.forEach(ws => {
+        if (ws) {
+            sendMessage(ws, message);
+        }
+    });
 }
 
 function pongResponse(t: number): PongMessage {
@@ -20,6 +34,19 @@ function pongResponse(t: number): PongMessage {
         type: "mhp.pong",
         payload: {
             t: t,
+            timestamp: Date.now(),
+        }
+    };
+}
+
+function updateStateMessage(pumping: PumpingStore, connection: ConnectionStore): ServerUpdateStateMessage {
+    return {
+        type: "mhp.server.updateState",
+        payload: {
+            isPumping: pumping.isPumping.get(),
+            repeat: pumping.repeat.get(),
+            startTime: pumping.startTime.get(),
+            isConnected: connection.isPiConnected.get(),
             timestamp: Date.now(),
         }
     }
@@ -32,10 +59,19 @@ function pingHandler(message: PingMessage, ws: WebSocket) {
 }
 
 function clientUpdateStateHandler(message: ClientUpdateStateMessage) {
-    transaction(() => {
-        if (pumping.isPumping.get() !== message.payload.pumping) {
-            pumping.isPumping.set(message.payload.pumping);
+    runInAction(() => {
+        if (pumping.isPumping.get() !== message.payload.isPumping) {
+            pumping.isPumping.set(message.payload.isPumping);
         }
+        if(pumping.repeat.get() !== message.payload.repeat) {
+            pumping.repeat.set(message.payload.repeat);
+        }
+        if(pumping.startTime.get() !== message.payload.startTime) {
+            pumping.startTime.set(message.payload.startTime);
+        }
+        sendMessageToAll(
+            updateStateMessage(pumping, connection),
+        );
     });
 }
 
@@ -65,12 +101,30 @@ function parseWSData(data: string, ws: WebSocket) {
     }
 }
 
+function addClient(client: WebSocket): WebSocket[] {
+    if (client) {
+        clients.push(client);
+    }
+    console.log("clients", clients.length);
+    return clients;
+}
+
+function removeClient(client: WebSocket): WebSocket[] {
+    if (client) {
+        clients = clients.filter(ws => ws !== client);
+    }
+    console.log("clients", clients.length);
+    return clients;
+}
+
 export function registerWSServer(server: Server) {
     const wss = new WebSocket.Server({
         server: server,
     });
 
     wss.on("connection", (ws: WebSocket) => {
+        addClient(ws);
+        sendMessage(ws, updateStateMessage(pumping, connection));
         console.log("WS client is connected");
 
         ws.onmessage = event => {
@@ -78,10 +132,12 @@ export function registerWSServer(server: Server) {
         };
 
         ws.onclose = event => {
+            removeClient(ws);
             console.log("WS client is closed", event.code);
         };
 
         ws.onerror = event => {
+            removeClient(ws);
             console.log("WS client error", event.message);
         }
     });
