@@ -14,7 +14,7 @@ import {
     OutgoingServerMessage,
     PingMessage,
     PongMessage,
-    PUMPIMG_TIMEOUT,
+    PUMPING_TIMEOUT,
     PumpingStore,
     ServerUpdateStateMessage,
 } from "@mandarin-home-pi/common";
@@ -60,9 +60,7 @@ function updateStateMessage(pumping: PumpingStore, connection: ConnectionStore):
 }
 
 function pingHandler(message: PingMessage, ws: WebSocket) {
-    console.log("PING:", message.payload.timestamp);
     sendMessage(ws, pongResponse(message.payload.timestamp));
-
 }
 
 function clientUpdateStateHandler(message: ClientUpdateStateMessage) {
@@ -144,7 +142,7 @@ reaction(() => pumping.isPumping.get(), (value) => {
             sendMessageToAll(
                 updateStateMessage(pumping, connection),
             );
-        }, PUMPIMG_TIMEOUT);
+        }, PUMPING_TIMEOUT);
     }
 });
 

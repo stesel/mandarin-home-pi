@@ -34,4 +34,4 @@ export enum StartTimeType {
     TwentyThree = "23:00",
 }
 
-export const PUMPIMG_TIMEOUT = 10000;
+export const PUMPING_TIMEOUT = 10000;

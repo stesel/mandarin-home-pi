@@ -105,8 +105,8 @@ export const registerWS = () => {
 
         ws = getWS();
 
-        ws.onopen = (event) => {
-            console.log("WS OPENED: ", event);
+        ws.onopen = () => {
+            console.log("WS OPENED");
             updateServerConnected(true);
             clearReconnection();
             startPing(sendMessage);
@@ -122,7 +122,6 @@ export const registerWS = () => {
             reconnect();
         };
         ws.onmessage = (event: MessageEvent) => {
-            console.log("WS DATA: ", event.data);
             parseWSData(event.data as string);
         };
     }

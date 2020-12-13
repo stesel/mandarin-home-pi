@@ -102,14 +102,14 @@ export const registerWS = () => {
 
         ws = getWS();
 
-        ws.onopen = (event) => {
-            console.log("WS OPENED: ", event);
+        ws.onopen = () => {
+            console.log("WS OPENED");
             updateServerConnected(true);
             clearReconnection();
             startPing(sendMessage);
         };
-        ws.onclose = (event) => {
-            console.log("WS CLOSED: ", event);
+        ws.onclose = () => {
+            console.log("WS CLOSED");
             updateServerConnected(false);
             reconnect();
         };

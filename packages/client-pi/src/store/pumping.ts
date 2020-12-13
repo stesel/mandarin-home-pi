@@ -1,11 +1,12 @@
 import {
+    PUMPING_TIMEOUT,
     PumpingStore,
     RepeatType,
     StartTimeType,
 } from "@mandarin-home-pi/common";
 import {
-    autorun,
     observable,
+    reaction,
 } from "mobx";
 
 export const pumping: PumpingStore = {
@@ -15,4 +16,17 @@ export const pumping: PumpingStore = {
     changePumping: observable.box(false),
 };
 
-autorun(reaction => reaction.trace());
+let pumpingTimeout: NodeJS.Timeout;
+reaction(() => pumping.isPumping.get(), value => {
+    if (value) {
+        pumpingTimeout = setTimeout(() => {
+            pumping.isPumping.set(false);
+        }, PUMPING_TIMEOUT);
+    } else {
+        clearTimeout(pumpingTimeout);
+    }
+});
+
+process.on("SIGHUP", () => {
+    clearTimeout(pumpingTimeout);
+});

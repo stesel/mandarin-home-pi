@@ -1,5 +1,6 @@
 import * as path from "path";
 import { Configuration } from "webpack";
+import nodeExternals from "webpack-node-externals";
 
 const config: Configuration = {
     mode: "production",
@@ -24,6 +25,10 @@ const config: Configuration = {
     },
     performance: {
         hints: false,
+    },
+    externals: [nodeExternals()],
+    optimization: {
+        minimize: true,
     },
 };
 
