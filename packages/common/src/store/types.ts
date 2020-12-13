@@ -1,8 +1,8 @@
+import { IObservableValue } from "mobx";
 import {
     RepeatType,
     StartTimeType,
-} from "@mandarin-home-pi/common/schedule/consts";
-import { IObservableValue } from "mobx";
+} from "../schedule/consts";
 
 export interface ConnectionStore {
     isServerConnected: IObservableValue<boolean>;

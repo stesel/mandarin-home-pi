@@ -1,4 +1,7 @@
-import { runInAction } from "mobx";
+import {
+    reaction,
+    runInAction,
+} from "mobx";
 import { connection } from "../store/connection";
 import { pumping } from "../store/pumping";
 import { Server } from "http";
@@ -7,21 +10,25 @@ import {
     ClientUpdateStateMessage,
     ConnectionStore,
     IncomingServerMessage,
+    MANDARIN_HOME_PI_PARAM,
     OutgoingServerMessage,
     PingMessage,
     PongMessage,
+    PUMPIMG_TIMEOUT,
     PumpingStore,
     ServerUpdateStateMessage,
 } from "@mandarin-home-pi/common";
-import WebSocket = require("ws");
+import WebSocket from "ws";
+import http from "http";
 
 let clients: WebSocket[] = [];
+let piClient: WebSocket | null;
 
 function sendMessage(ws: WebSocket, message: OutgoingServerMessage) {
     ws.send(JSON.stringify(message));
 }
 
-function sendMessageToAll(message: OutgoingServerMessage) {
+export function sendMessageToAll(message: OutgoingServerMessage) {
     clients.forEach(ws => {
         if (ws) {
             sendMessage(ws, message);
@@ -61,6 +68,7 @@ function pingHandler(message: PingMessage, ws: WebSocket) {
 function clientUpdateStateHandler(message: ClientUpdateStateMessage) {
     runInAction(() => {
         if (pumping.isPumping.get() !== message.payload.isPumping) {
+            clearTimeout(pumpingTimeout);
             pumping.isPumping.set(message.payload.isPumping);
         }
         if(pumping.repeat.get() !== message.payload.repeat) {
@@ -88,6 +96,7 @@ function parseWSData(data: string, ws: WebSocket) {
                 break;
             case "mhp.client.updateState":
                 clientUpdateStateHandler(message);
+                console.warn(message.type, data);
                 break;
             case "mhp.client.takeShot":
                 clientTakeShotHandler(message);
@@ -112,17 +121,48 @@ function addClient(client: WebSocket): WebSocket[] {
 function removeClient(client: WebSocket): WebSocket[] {
     if (client) {
         clients = clients.filter(ws => ws !== client);
+        if (client === piClient) {
+            runInAction(() => {
+                connection.isPiConnected.set(false);
+            });
+            sendMessageToAll(
+                updateStateMessage(pumping, connection),
+            );
+            piClient = null;
+        }
     }
     console.log("clients", clients.length);
     return clients;
 }
+
+let pumpingTimeout: NodeJS.Timeout;
+
+reaction(() => pumping.isPumping.get(), (value) => {
+    if (value) {
+        pumpingTimeout = setTimeout(() => {
+            pumping.isPumping.set(!pumping.isPumping.get());
+            sendMessageToAll(
+                updateStateMessage(pumping, connection),
+            );
+        }, PUMPIMG_TIMEOUT);
+    }
+});
 
 export function registerWSServer(server: Server) {
     const wss = new WebSocket.Server({
         server: server,
     });
 
-    wss.on("connection", (ws: WebSocket) => {
+    wss.on("connection", (ws: WebSocket, request: http.IncomingMessage) => {
+        if (request.url && request.url.includes(MANDARIN_HOME_PI_PARAM)) {
+            piClient = ws;
+            runInAction(() => {
+                connection.isPiConnected.set(true);
+            });
+            sendMessageToAll(
+                updateStateMessage(pumping, connection),
+            );
+        }
         addClient(ws);
         sendMessage(ws, updateStateMessage(pumping, connection));
         console.log("WS client is connected");

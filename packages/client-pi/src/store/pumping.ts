@@ -1,12 +1,12 @@
 import {
-    autorun,
-    observable,
-} from "mobx";
-import {
     PumpingStore,
     RepeatType,
     StartTimeType,
 } from "@mandarin-home-pi/common";
+import {
+    autorun,
+    observable,
+} from "mobx";
 
 export const pumping: PumpingStore = {
     isPumping: observable.box(false),

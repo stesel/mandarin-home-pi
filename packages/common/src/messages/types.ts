@@ -1,12 +1,13 @@
 import {
     RepeatType,
     StartTimeType,
-} from "@mandarin-home-pi/common/schedule/consts";
+} from "../schedule/consts";
 
 export interface GenericPayload {
     timestamp: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export interface GenericMessage<T extends string, P extends {} = {}> {
     readonly type: T;
     readonly payload: P & GenericPayload;
@@ -79,3 +80,5 @@ export type OutgoingClientMessage =
     | PingMessage
     | ClientUpdateStateMessage
     | ClientTakeShotMessage;
+
+export const MANDARIN_HOME_PI_PARAM = "mandarinHomePi";

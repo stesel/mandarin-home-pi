@@ -5,15 +5,13 @@ import bodyParser from "body-parser";
 import { env } from "./env";
 import { registerWSServer } from "./servicers/webSocketServer";
 import { userAuthentication } from "./servicers/loginService";
-import { StartTimeType } from "@mandarin-home-pi/common";
-
-console.log(StartTimeType.Nine);
+import { registerDB } from "./servicers/db";
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors);
 
 app.use(express.static("../client/build"));
 
@@ -28,6 +26,7 @@ app.set("port", process.env.PORT || 3001);
 app.get("/env", env);
 
 registerWSServer(server);
+registerDB();
 
 server.listen(app.get("port"), () => {
     console.log(

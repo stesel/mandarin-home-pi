@@ -25,6 +25,14 @@ const config: Configuration = {
     performance: {
         hints: false,
     },
+    externals: {
+        "bufferutil": "bufferutil",
+        "utf-8-validate": "utf-8-validate",
+        "express": "express",
+    },
+    optimization: {
+        minimize: false,
+    },
 };
 
 export default config;

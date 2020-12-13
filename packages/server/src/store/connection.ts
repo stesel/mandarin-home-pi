@@ -6,8 +6,3 @@ export const connection: ConnectionStore = {
     isPiConnected: observable.box(false),
     connectionLatency: observable.box(0),
 }
-
-// DEBUG
-setInterval(() => {
-    connection.isPiConnected.set(!connection.isPiConnected.get());
-}, 5000);
