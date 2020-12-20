@@ -8,7 +8,7 @@ import { registerSchedule } from "./servicers/schedule";
 const app = express();
 
 const httpPort = process.env.HTTP_PORT_PI || 3000;
-const wsPort = process.env.HTTP_PORT_PI || 3001;
+const wsPort = process.env.WS_PORT_PI || 3001;
 
 app.use(express.static(path.join(".", "packages", "client", "build")));
 app.use("/mandarin-home-pi.js", express.static(path.join(".", "packages", "client-pi", "build", "index.js")));
