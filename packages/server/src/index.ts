@@ -7,7 +7,7 @@ import { registerSchedule } from "./servicers/schedule";
 
 const app = express();
 
-const httpPort = process.env.HTTP_PORT_PI || 3000;
+const httpPort = process.env.PORT || process.env.HTTP_PORT_PI || 3000;
 const wsPort = process.env.WS_PORT_PI || 3001;
 
 app.use(express.static(path.join(".", "packages", "client", "build")));
