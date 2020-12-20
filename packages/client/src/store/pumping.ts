@@ -1,12 +1,9 @@
+import { observable } from "mobx";
 import {
     PumpingStore,
     RepeatType,
     StartTimeType,
 } from "@mandarin-home-pi/common";
-import {
-    autorun,
-    observable,
-} from "mobx";
 
 export const pumping: PumpingStore = {
     isPumping: observable.box(false),
@@ -15,5 +12,3 @@ export const pumping: PumpingStore = {
     lastTime: observable.box(0),
     changePumping: observable.box(false),
 };
-
-autorun(reaction => reaction.trace());
