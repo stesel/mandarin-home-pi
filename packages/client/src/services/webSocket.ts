@@ -111,9 +111,8 @@ function authorizeRequest(password: string): AuthorizeMessage {
 }
 
 function getWS(): WebSocket {
-    const wsProtocol = process.env.NODE_ENV === "production" ? "wss" : "ws";
-    const wsPort = process.env.WS_PORT_PI || 3001;
-    return new WebSocket(`${wsProtocol}://${window.location.hostname}:${wsPort}`);
+    const host = window.location.origin.replace(/^http/, 'ws')
+    return new WebSocket(host);
 }
 
 export const registerWS = () => {
