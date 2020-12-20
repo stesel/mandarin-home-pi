@@ -1,14 +1,12 @@
 # mandarin-home-pi
 
 ## Backend env
-`HTTP_PORT_PI`
-`WS_PORT_PI`
+`PORT_PI`
 `SECRET_PHRASE_PI`
 `DB_SECRET_PI`
 
 ## Pi env
 `WS_HOST_PI`
-`WS_PORT_PI`
 `SECRET_PHRASE_PI`
 
 ## Set Pi env

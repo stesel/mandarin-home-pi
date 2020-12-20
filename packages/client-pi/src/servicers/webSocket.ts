@@ -108,10 +108,9 @@ function sendShot(base64: string): PiSendShotMessage {
 }
 
 function getWS(): WebSocket {
-    const wsProtocol = process.env.NODE_ENV === "production" ? "wss" : "ws";
     const host = process.env.WS_HOST_PI || "localhost";
-    const port = process.env.WS_PORT_PI || "3000";
-    return new WebSocket(`${wsProtocol}://${host}:${port}?${MANDARIN_HOME_PI_PARAM}=true`);
+    const wsProtocol = host === "localhost" ? "ws" : "wss";
+    return new WebSocket(`${wsProtocol}://${host}?${MANDARIN_HOME_PI_PARAM}=true`);
 }
 
 export const registerWS = () => {
