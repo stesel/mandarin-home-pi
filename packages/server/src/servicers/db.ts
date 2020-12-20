@@ -16,6 +16,7 @@ interface DBData {
     data: {
         repeat: RepeatType;
         startTime: StartTimeType;
+        lastTime: number;
     }
 }
 
@@ -24,15 +25,16 @@ function getData(): DBData {
         data: {
             repeat: pumping.repeat.get(),
             startTime: pumping.startTime.get(),
+            lastTime: pumping.lastTime.get(),
         },
     };
 }
 
 export function registerDB() {
-    process.env.DB_SECRET_PI = "fnAD89FqpUACB4o8Sa6hkrLkzNNEWsdpflELFu_X";
+    const dbSecret = process.env.DB_SECRET_PI || "fnAD89FqpUACB4o8Sa6hkrLkzNNEWsdpflELFu_X";
 
     const client = new Client({
-        secret: process.env.DB_SECRET_PI,
+        secret: dbSecret,
         keepAlive: false,
     });
 
@@ -40,8 +42,9 @@ export function registerDB() {
         data: {
             repeat: pumping.repeat.get(),
             startTime: pumping.startTime.get(),
+            lastTime: pumping.lastTime.get(),
         },
-    }
+    };
 
     client.query(
         q.Get(q.Ref(q.Collection(collectionName), refId))
@@ -52,9 +55,11 @@ export function registerDB() {
 
             lastData.data.repeat = data.repeat;
             lastData.data.startTime = data.startTime;
+            lastData.data.lastTime = data.lastTime;
 
             pumping.repeat.set(data.repeat);
             pumping.startTime.set(data.startTime);
+            pumping.lastTime.set(data.lastTime);
         });
     }).catch(error => {
         if (error.name === "NotFound") {
@@ -72,13 +77,17 @@ export function registerDB() {
 
     function updateDB() {
         const { data } = getData();
-        if (data.repeat === lastData.data.repeat && data.startTime === lastData.data.startTime) {
-            console.log("DB is already actual");
+
+        if (data.repeat === lastData.data.repeat
+            && data.startTime === lastData.data.startTime
+            && data.lastTime === lastData.data.lastTime
+        ) {
             return;
         }
 
         lastData.data.repeat = data.repeat;
         lastData.data.startTime = data.startTime;
+        lastData.data.lastTime = data.lastTime;
 
         client.query(
             q.Update(
@@ -91,4 +100,5 @@ export function registerDB() {
 
     reaction(() => pumping.repeat.get(), () => updateDB());
     reaction(() => pumping.startTime.get(), () => updateDB());
+    reaction(() => pumping.lastTime.get(), () => updateDB());
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { ConnectionIcon } from "../connection/icon/ConnectionIcon";
 import { Latency } from "../connection/latency/Latency";
 

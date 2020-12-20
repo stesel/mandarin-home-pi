@@ -4,6 +4,9 @@ import {
 } from "mobx";
 import { pumping } from "../store/pumping";
 import {
+    AuthorizedMessage,
+    AuthorizeMessage,
+    ClientTakeShotMessage,
     ClientUpdateStateMessage,
     IncomingClientMessage,
     OutgoingClientMessage,
@@ -17,6 +20,7 @@ import {
     updateServerConnected,
 } from "../store/connection";
 import { createPingPong } from "./pingPong";
+import { ui } from "../store/ui";
 
 const { startPing, stopPing, handlePong } = createPingPong();
 
@@ -37,14 +41,29 @@ function serverUpdateStateHandler(message: ServerUpdateStateMessage) {
     });
 }
 
+function authorizedHandler(message: AuthorizedMessage) {
+    if (message.payload.authorized !== connection.isAuthorized.get()) {
+        runInAction(() => {
+            connection.isAuthorized.set(message.payload.authorized);
+        });
+    }
+}
+
 function serverSendShotHandler(message: ServerSendShotMessage) {
-    console.log("SHOT:", message.payload.base64);
+    if (message.payload.base64) {
+        runInAction(() => {
+            ui.shotBase64.set(message.payload.base64);
+        });
+    }
 }
 
 const parseWSData = (data: string) => {
     try {
         const message: IncomingClientMessage = JSON.parse(data);
         switch (message.type) {
+            case "mhp.authorized":
+                authorizedHandler(message);
+                break;
             case "mhp.pong":
                 handlePong(message, updateLatency);
                 break;
@@ -68,7 +87,26 @@ function updateStateRequest(pumping: PumpingStore): ClientUpdateStateMessage {
             repeat: pumping.repeat.get(),
             startTime: pumping.startTime.get(),
             timestamp: Date.now(),
-        }
+        },
+    };
+}
+
+function takeShotRequest(): ClientTakeShotMessage {
+    return {
+        type: "mhp.client.takeShot",
+        payload: {
+            timestamp: Date.now(),
+        },
+    };
+}
+
+function authorizeRequest(password: string): AuthorizeMessage {
+    return {
+        type: "mhp.authorize",
+        payload: {
+            password: password,
+            timestamp: Date.now(),
+        },
     };
 }
 
@@ -89,7 +127,6 @@ export const registerWS = () => {
     }
 
     const reconnect = () => {
-        console.warn("WS RECONNECT");
         stopPing();
         clearReconnection();
         reconnectTimeoutId = window.setTimeout(connect, reconnectTimeout);
@@ -119,7 +156,6 @@ export const registerWS = () => {
             reconnect();
         };
         ws.onmessage = (event: MessageEvent) => {
-            console.log("WS DATA: ", event.data);
             parseWSData(event.data);
         };
     }
@@ -132,8 +168,19 @@ export const registerWS = () => {
         }
     }
 
-    reaction(
-        () => pumping.changePumping.get(),
-        () => sendMessage(updateStateRequest(pumping)),
-    );
+    reaction(() => pumping.changePumping.get(), () => {
+        sendMessage(updateStateRequest(pumping));
+    });
+
+    reaction(() => ui.isShotOpen.get(), isOpen => {
+        if (isOpen) {
+            sendMessage(takeShotRequest());
+        }
+    });
+
+    reaction(() => connection.authorize.get(), password => {
+        if (password) {
+            sendMessage(authorizeRequest(password));
+        }
+    });
 };

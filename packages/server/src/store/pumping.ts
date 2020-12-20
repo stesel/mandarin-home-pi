@@ -1,7 +1,4 @@
-import {
-    autorun,
-    observable,
-} from "mobx";
+import { observable } from "mobx";
 import {
     PumpingStore,
     RepeatType,
@@ -12,7 +9,6 @@ export const pumping: PumpingStore = {
     isPumping: observable.box(false),
     repeat: observable.box(RepeatType.Never),
     startTime: observable.box(StartTimeType.Zero),
+    lastTime: observable.box(15),
     changePumping: observable.box(false),
 };
-
-autorun(reaction => reaction.trace());

@@ -1,32 +1,33 @@
+import * as path from "path";
 import express from "express";
 import * as http from "http";
-import cors from "cors";
-import bodyParser from "body-parser";
-import { env } from "./env";
 import { registerWSServer } from "./servicers/webSocketServer";
-import { userAuthentication } from "./servicers/loginService";
 import { registerDB } from "./servicers/db";
+import { registerSchedule } from "./servicers/schedule";
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(cors);
+const httpPort = process.env.HTTP_PORT_PI || 3000;
+const wsPort = process.env.HTTP_PORT_PI || 3001;
 
-app.use(express.static("../client/build"));
+app.use(express.static(path.join(".", "packages", "client", "build")));
+app.use("/mandarin-home-pi.js", express.static(path.join(".", "packages", "client-pi", "build", "index.js")));
 
-const router = express.Router();
-router.post("/users/authenticate", userAuthentication);
-app.use(router);
+if (process.env.NODE_ENV === "production") {
+    app.listen(httpPort);
+}
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(path.join(__dirname, "..", "..", "client", "build", "index.html")));
+});
 
 const server = http.createServer(app);
 
-// test app.set("port", process.env.PORT || 3001);
-app.set("port", process.env.PORT || 3001);
-app.get("/env", env);
+app.set("port", wsPort);
 
-registerWSServer(server);
 registerDB();
+registerWSServer(server);
+registerSchedule();
 
 server.listen(app.get("port"), () => {
     console.log(

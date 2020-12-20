@@ -6,6 +6,7 @@
     "clean": "rm -rf ./node_modules && rm -rf ./packages/*/node_modules",
     "bootstrap": "lerna bootstrap",
     "start:app": "lerna run --scope @mandarin-home-pi/server start",
+    "start:prod": "node ./packages/server/build/index.js",
     "build": "ultra -r --build build",
     "test": "ultra -r test",
     "lint": "ultra -r lint",

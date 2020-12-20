@@ -17,4 +17,5 @@ code {
 h2 {
     font-size: 1em;
     margin: 0.5em;
+    user-select: none;
 }

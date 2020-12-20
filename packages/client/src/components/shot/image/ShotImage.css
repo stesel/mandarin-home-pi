@@ -1,0 +1,5 @@
+.shotImage {
+    width: 85vw;
+    height: 50vh;
+    object-fit: contain;
+}

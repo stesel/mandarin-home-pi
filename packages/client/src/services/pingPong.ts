@@ -48,7 +48,6 @@ export function createPingPong(interval = 10000): PingPong {
         if (lastPingTime === message.payload.t) {
             const latency = Date.now() - lastPingTime;
             updateLatency(latency);
-            console.log("Latency:", latency);
         }
     }
 

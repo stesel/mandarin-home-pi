@@ -2,7 +2,7 @@ import {
     IObservableValue,
     runInAction,
 } from "mobx";
-import React, { useCallback } from "react";
+import * as React from "react";
 import { MobXProviderContext, useObserver } from "mobx-react";
 import {
     ConnectionStore,
@@ -12,6 +12,10 @@ import {
     Stores,
     UIStore,
 } from "@mandarin-home-pi/common";
+import {
+    closeShot,
+    openShot,
+} from "../store/ui";
 
 export function useStores(): Stores {
     return React.useContext<Stores>(MobXProviderContext as unknown as React.Context<Stores>)
@@ -62,7 +66,7 @@ export function useScheduleStartTime(): StartTimeType {
 
 export function useChangeIsPumping(): (value: boolean) => void {
     const { isPumping, changePumping } = usePumping();
-    return useCallback<(value: boolean) => void>(value => {
+    return React.useCallback<(value: boolean) => void>(value => {
         runInAction(() => {
             isPumping.set(value);
             changePumping.set(!changePumping.get());
@@ -72,7 +76,7 @@ export function useChangeIsPumping(): (value: boolean) => void {
 
 export function useChangeRepeat(): React.ChangeEventHandler<HTMLSelectElement> {
     const { repeat, changePumping } = usePumping();
-    return useCallback<React.ChangeEventHandler<HTMLSelectElement>>(event => {
+    return React.useCallback<React.ChangeEventHandler<HTMLSelectElement>>(event => {
         runInAction(() => {
             repeat.set(event.target.value as RepeatType);
             changePumping.set(!changePumping.get());
@@ -82,7 +86,7 @@ export function useChangeRepeat(): React.ChangeEventHandler<HTMLSelectElement> {
 
 export function useChangeStartTime(): React.ChangeEventHandler<HTMLSelectElement> {
     const { startTime, changePumping } = usePumping();
-    return useCallback<React.ChangeEventHandler<HTMLSelectElement>>(event => {
+    return React.useCallback<React.ChangeEventHandler<HTMLSelectElement>>(event => {
         runInAction(() => {
             startTime.set(event.target.value as StartTimeType);
             changePumping.set(!changePumping.get());
@@ -97,4 +101,51 @@ export function useUI(): UIStore {
 
 export function useIsScheduleOpen(): boolean {
     return useObservableValue(useUI, "isScheduleOpen");
+}
+
+export function useIsShotOpen(): boolean {
+    return useObservableValue(useUI, "isShotOpen");
+}
+
+export function useOpenShot() {
+    return openShot;
+}
+
+export function useCloseShot() {
+    return closeShot;
+}
+
+export function useShotBase64(): string {
+    return useObservableValue(useUI, "shotBase64");
+}
+
+export function useIsAuthorized(): boolean {
+    return useObservableValue(useConnection, "isAuthorized");
+}
+
+export function useAuthorization() {
+    const { authorize } = useConnection();
+
+    const [password, setPassword] = React.useState("");
+
+    const onChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.target.value);
+    }, [setPassword]);
+
+    const onSubmit = React.useCallback((e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        runInAction(() => {
+            authorize.set("");
+        });
+        runInAction(() => {
+            authorize.set(password);
+        });
+    }, [authorize, password]);
+
+    return {
+        onChange: onChange,
+        onSubmit: onSubmit,
+    };
 }

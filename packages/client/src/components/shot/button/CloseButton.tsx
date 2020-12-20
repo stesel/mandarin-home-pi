@@ -1,12 +1,12 @@
 import { Button } from "../../button/Button";
 import * as React from "react";
-import { closeSchedule } from "../../../store/ui";
+import { useCloseShot } from "../../hooks";
 
 export const CloseButton: React.FC = () => {
     return (
         <Button
             label="Close"
-            onClick={closeSchedule}
+            onClick={useCloseShot()}
         />
     );
 };

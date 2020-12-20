@@ -28,7 +28,6 @@ export type ServerSendShotMessage = GenericMessage<"mhp.server.sendShot", {
 
 export type PiUpdateStateMessage = GenericMessage<"mhp.pi.updateState", {
     isPumping: boolean;
-    timeRemaining: number;
 }>;
 
 export type PiSendShotMessage = GenericMessage<"mhp.pi.sendShot", {
@@ -43,12 +42,21 @@ export type ClientUpdateStateMessage = GenericMessage<"mhp.client.updateState", 
 
 export type ClientTakeShotMessage = GenericMessage<"mhp.client.takeShot">;
 
+export type AuthorizeMessage = GenericMessage<"mhp.authorize", {
+    password: string;
+}>;
+
+export type AuthorizedMessage = GenericMessage<"mhp.authorized", {
+    authorized: boolean;
+}>;
+
 export type PingMessage = GenericMessage<"mhp.ping">;
 export type PongMessage = GenericMessage<"mhp.pong", {
     t: number;
 }>;
 
 export type IncomingServerMessage =
+    | AuthorizeMessage
     | PingMessage
     | PiUpdateStateMessage
     | PiSendShotMessage
@@ -56,27 +64,32 @@ export type IncomingServerMessage =
     | ClientTakeShotMessage;
 
 export type OutgoingServerMessage =
+    | AuthorizedMessage
     | PongMessage
     | ServerUpdateStateMessage
     | ServerTakeShotMessage
     | ServerSendShotMessage;
 
 export type IncomingPiMessage =
+    | AuthorizedMessage
     | PongMessage
     | ServerUpdateStateMessage
     | ServerTakeShotMessage;
 
 export type OutgoingPiMessage =
+    | AuthorizeMessage
     | PingMessage
     | PiUpdateStateMessage
     | PiSendShotMessage;
 
 export type IncomingClientMessage =
+    | AuthorizedMessage
     | PongMessage
     | ServerUpdateStateMessage
     | ServerSendShotMessage;
 
 export type OutgoingClientMessage =
+    | AuthorizeMessage
     | PingMessage
     | ClientUpdateStateMessage
     | ClientTakeShotMessage;

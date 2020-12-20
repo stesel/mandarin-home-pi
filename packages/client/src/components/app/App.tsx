@@ -9,6 +9,9 @@ import { ui } from "../../store/ui";
 import { StatusBar } from "../statusBar/StatusBar";
 import { ScheduleButton } from "../schedule/button/ScheduleButton";
 import { Schedule } from "../schedule/Schedule";
+import { Authorization } from "../authorization/Authorization";
+import { ShotButton } from "../shot/button/ShotButton";
+import { Shot } from "../shot/Shot";
 
 export class App extends React.Component {
 
@@ -27,8 +30,11 @@ export class App extends React.Component {
                     <main className="App-main">
                         <Pumping />
                         <ScheduleButton />
+                        <ShotButton />
                     </main>
                     <Schedule />
+                    <Shot />
+                    <Authorization />
                     <StatusBar />
                 </div>
             </Provider>

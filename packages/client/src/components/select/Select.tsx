@@ -11,7 +11,7 @@ export interface SelectProps extends React.DetailedHTMLProps<
 export const Select: React.FC<SelectProps> = props => {
     return (
         <div className="selectWrapper">
-            <label>Repeat</label>
+            <label>{props.label}</label>
             <select {...props}>
                 {props.children}
             </select>

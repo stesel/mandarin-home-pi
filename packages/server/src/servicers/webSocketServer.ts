@@ -6,34 +6,52 @@ import { connection } from "../store/connection";
 import { pumping } from "../store/pumping";
 import { Server } from "http";
 import {
-    ClientTakeShotMessage,
+    AuthorizedMessage,
+    AuthorizeMessage,
     ClientUpdateStateMessage,
     ConnectionStore,
     IncomingServerMessage,
     MANDARIN_HOME_PI_PARAM,
     OutgoingServerMessage,
     PingMessage,
+    PiSendShotMessage,
     PongMessage,
-    PUMPING_TIMEOUT,
     PumpingStore,
+    ServerSendShotMessage,
+    ServerTakeShotMessage,
     ServerUpdateStateMessage,
 } from "@mandarin-home-pi/common";
 import WebSocket from "ws";
 import http from "http";
 
-let clients: WebSocket[] = [];
-let piClient: WebSocket | null;
+interface Client {
+    ws: WebSocket;
+    authorized: boolean;
+}
 
-function sendMessage(ws: WebSocket, message: OutgoingServerMessage) {
-    ws.send(JSON.stringify(message));
+let clients: Client[] = [];
+let piClient: Client | null;
+
+function sendMessage(client: Client, message: OutgoingServerMessage) {
+    if (client.ws && client.authorized) {
+        client.ws.send(JSON.stringify(message));
+    }
 }
 
 export function sendMessageToAll(message: OutgoingServerMessage) {
-    clients.forEach(ws => {
-        if (ws) {
-            sendMessage(ws, message);
-        }
+    clients.forEach((client) => {
+        sendMessage(client, message);
     });
+}
+
+function authorizedMessage(authorized: boolean): AuthorizedMessage {
+    return {
+        type: "mhp.authorized",
+        payload: {
+            authorized: authorized,
+            timestamp: Date.now(),
+        }
+    };
 }
 
 function pongResponse(t: number): PongMessage {
@@ -59,14 +77,47 @@ function updateStateMessage(pumping: PumpingStore, connection: ConnectionStore):
     }
 }
 
-function pingHandler(message: PingMessage, ws: WebSocket) {
-    sendMessage(ws, pongResponse(message.payload.timestamp));
+function takeShotMessage(): ServerTakeShotMessage {
+    return {
+        type: "mhp.server.takeShot",
+        payload: {
+            timestamp: Date.now(),
+        }
+    }
+}
+
+function serverSendShotMessage(base64: string): ServerSendShotMessage {
+    return {
+        type: "mhp.server.sendShot",
+        payload: {
+            base64: base64,
+            timestamp: Date.now(),
+        }
+    }
+}
+
+function clientAuthorize(message: AuthorizeMessage, client: Client) {
+    const secret = process.env.SECRET_PHRASE_PI || "test";
+
+    const authorized = message.payload.password === secret;
+    client.authorized = authorized;
+
+    if (client.ws) {
+        client.ws.send(JSON.stringify(authorizedMessage(authorized)));
+    }
+
+    if (authorized) {
+        sendMessage(client, updateStateMessage(pumping, connection));
+    }
+}
+
+function pingHandler(message: PingMessage, client: Client) {
+    sendMessage(client, pongResponse(message.payload.timestamp));
 }
 
 function clientUpdateStateHandler(message: ClientUpdateStateMessage) {
     runInAction(() => {
         if (pumping.isPumping.get() !== message.payload.isPumping) {
-            clearTimeout(pumpingTimeout);
             pumping.isPumping.set(message.payload.isPumping);
         }
         if(pumping.repeat.get() !== message.payload.repeat) {
@@ -81,23 +132,38 @@ function clientUpdateStateHandler(message: ClientUpdateStateMessage) {
     });
 }
 
-function clientTakeShotHandler(message: ClientTakeShotMessage) {
-    console.log("SHOT:", message.payload.timestamp);
+function clientTakeShotHandler() {
+    if (piClient) {
+        sendMessage(piClient, takeShotMessage());
+    }
 }
 
-function parseWSData(data: string, ws: WebSocket) {
+function piSendShotHandler(message: PiSendShotMessage) {
+    clients.forEach(client => {
+        if (client !== piClient) {
+            sendMessage(client, serverSendShotMessage(message.payload.base64));
+        }
+    });
+}
+
+function parseWSData(data: string, client: Client) {
     try {
         const message: IncomingServerMessage = JSON.parse(data);
         switch (message.type) {
+            case "mhp.authorize":
+                clientAuthorize(message, client);
+                break;
             case "mhp.ping":
-                pingHandler(message, ws);
+                pingHandler(message, client);
                 break;
             case "mhp.client.updateState":
                 clientUpdateStateHandler(message);
-                console.warn(message.type, data);
                 break;
             case "mhp.client.takeShot":
-                clientTakeShotHandler(message);
+                clientTakeShotHandler();
+                break;
+            case "mhp.pi.sendShot":
+                piSendShotHandler(message);
                 break;
             default:
                 console.warn("UNHANDLED MESSAGE: ", message);
@@ -108,15 +174,14 @@ function parseWSData(data: string, ws: WebSocket) {
     }
 }
 
-function addClient(client: WebSocket): WebSocket[] {
-    if (client) {
+function addClient(client: Client): Client[] {
+    if (client.ws) {
         clients.push(client);
     }
-    console.log("clients", clients.length);
     return clients;
 }
 
-function removeClient(client: WebSocket): WebSocket[] {
+function removeClient(client: Client): Client[] {
     if (client) {
         clients = clients.filter(ws => ws !== client);
         if (client === piClient) {
@@ -133,27 +198,19 @@ function removeClient(client: WebSocket): WebSocket[] {
     return clients;
 }
 
-let pumpingTimeout: NodeJS.Timeout;
-
-reaction(() => pumping.isPumping.get(), (value) => {
-    if (value) {
-        pumpingTimeout = setTimeout(() => {
-            pumping.isPumping.set(!pumping.isPumping.get());
-            sendMessageToAll(
-                updateStateMessage(pumping, connection),
-            );
-        }, PUMPING_TIMEOUT);
-    }
-});
-
 export function registerWSServer(server: Server) {
     const wss = new WebSocket.Server({
         server: server,
     });
 
     wss.on("connection", (ws: WebSocket, request: http.IncomingMessage) => {
+        const client: Client = {
+            ws: ws,
+            authorized: false,
+        }
+
         if (request.url && request.url.includes(MANDARIN_HOME_PI_PARAM)) {
-            piClient = ws;
+            piClient = client;
             runInAction(() => {
                 connection.isPiConnected.set(true);
             });
@@ -161,22 +218,26 @@ export function registerWSServer(server: Server) {
                 updateStateMessage(pumping, connection),
             );
         }
-        addClient(ws);
-        sendMessage(ws, updateStateMessage(pumping, connection));
-        console.log("WS client is connected");
+
+        addClient(client);
+        client.ws.send(JSON.stringify(authorizedMessage(false)));
 
         ws.onmessage = event => {
-            parseWSData(event.data as string, event.target);
+            parseWSData(event.data as string, client);
         };
 
         ws.onclose = event => {
-            removeClient(ws);
+            removeClient(client);
             console.log("WS client is closed", event.code);
         };
 
         ws.onerror = event => {
-            removeClient(ws);
+            removeClient(client);
             console.log("WS client error", event.message);
         }
+    });
+
+    reaction(() => pumping.isPumping.get(), () => {
+        sendMessageToAll(updateStateMessage(pumping, connection));
     });
 }
