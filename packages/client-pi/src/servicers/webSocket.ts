@@ -180,11 +180,6 @@ export const registerWS = () => {
     );
 
     reaction(
-        () => pumping.changePumping.get(),
-        () => sendMessage(updateStateRequest(pumping)),
-    );
-
-    reaction(
         () => camera.imageBase64.get(), base64 => {
            if (base64) {
                sendMessage(sendShot(base64))

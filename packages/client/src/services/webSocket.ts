@@ -111,7 +111,7 @@ function authorizeRequest(password: string): AuthorizeMessage {
 }
 
 function getWS(): WebSocket {
-    const host = window.location.origin.replace(/^http/, 'ws')
+    const host = window.location.origin.replace(/^http/, "ws");
     return new WebSocket(host);
 }
 

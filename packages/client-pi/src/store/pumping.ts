@@ -7,6 +7,7 @@ import {
 import {
     observable,
     reaction,
+    runInAction,
 } from "mobx";
 
 export const pumping: PumpingStore = {
@@ -21,7 +22,9 @@ let pumpingTimeout: NodeJS.Timeout;
 reaction(() => pumping.isPumping.get(), value => {
     if (value) {
         pumpingTimeout = setTimeout(() => {
-            pumping.isPumping.set(false);
+            runInAction(() => {
+                pumping.isPumping.set(false);
+            });
         }, PUMPING_TIMEOUT);
     } else {
         clearTimeout(pumpingTimeout);
