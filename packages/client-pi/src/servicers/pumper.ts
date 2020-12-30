@@ -1,12 +1,11 @@
 import { Gpio } from "onoff";
 import { reaction } from "mobx";
 import { pumping } from "../store/pumping";
-import { execSync } from "child_process";
+import { isMandarinPiDevice } from "../utils/deviceUtils";
 
-export function registerDevice() {
-    const uname = execSync("uname -a").toString();
-    if (!uname.includes("raspberrypi")) {
-        console.warn("This is not PI device");
+export function registerPumper() {
+    if (!isMandarinPiDevice()) {
+        console.warn("This is not Mandarin PI device");
         return;
     }
 
@@ -14,7 +13,7 @@ export function registerDevice() {
 
     const writePamper = (value: boolean) => {
         pumper.write(value ? 1 : 0)
-            .then(value => console.log("Pumper state changed:", value))
+            .then(() => console.log("Pumper state changed:", value))
             .catch(reason => console.log("Pumper state change error:", reason));
     };
 
