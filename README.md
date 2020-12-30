@@ -1,3 +1,4 @@
+![Node CI](https://github.com/stesel/mandarin-home-pi/workflows/Node%20CI/badge.svg?branch=master)
 # mandarin-home-pi
 
 ## Backend env
