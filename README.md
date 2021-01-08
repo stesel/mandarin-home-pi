@@ -34,9 +34,15 @@ https://www.raspberrypi.org/documentation/usage/camera/installing.md
 
 ## GPIO
 http://wiringpi.com/
-
+```
 gpio -g mode 4 output
 gpio -g blink 4
 or
 gpio -g write 4 1 (to turn it on)
 gpio -g write 4 0 (to turn it off)
+```
+
+## PM2
+```
+wget -qO- https://getpm2.com/install.sh | bash
+```
