@@ -6,7 +6,7 @@ import {
 export function createGpio(pin: number, mode: "input" | "output") {
     return {
         setup() {
-            return execute(`gpio -g mode ${pin} ${mode} && gpio -g read 4`);
+            return execute(`gpio -g mode ${pin} ${mode} && gpio -g read ${pin}`);
         },
         write(value: 0 | 1) {
             return execute(`gpio -g write ${pin} ${value} && gpio -g read ${pin}`);
