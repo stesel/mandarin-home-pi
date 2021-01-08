@@ -6,11 +6,6 @@ import {
 import { writeFile } from "fs";
 import * as path from "path";
 
-export function isMandarinPiDevice() {
-    const uname = execSync("uname -a").toString();
-    return uname.includes("mandarinpi");
-}
-
 export function execute(command: string, options: ExecOptions = {}) {
     return new Promise<string>((resolve, reject) => {
         exec(command, options, (error, stdout, stderr) => {
@@ -22,11 +17,20 @@ export function execute(command: string, options: ExecOptions = {}) {
     });
 }
 
+export function executeSync(command: string) {
+    return execSync(command);
+}
+
+export function isMandarinPiDevice() {
+    const uname = executeSync("uname -a").toString();
+    return uname.includes("mandarinpi");
+}
+
 export function saveMandarinShotToFile(image: string) {
     writeFile(
         path.join(".", "mandarin-pi-shots", `${new Date().toISOString()}.jpg`),
         image,
-        error => console.warn("Failed to write image", error?.name)
+        error => !!error && console.warn("Failed to write image", JSON.stringify(error.message)),
     );
 }
 
@@ -40,7 +44,7 @@ const cameraExecOptions = { encoding: "binary", maxBuffer: cameraBuffer };
 
 export async function getCameraShot() {
     return await execute(
-        "raspistill --nopreview --width 640 --height 480",
+        "raspistill --nopreview --width 640 --height 480 --output -",
         cameraExecOptions,
     );
 }

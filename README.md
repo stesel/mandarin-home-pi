@@ -28,3 +28,15 @@ pm2 save
 ```
 arp -na | grep "PI MAC" | grep -E -o "192.168.0.[0-9]{1,3}"
 ```
+
+## Camera setup
+https://www.raspberrypi.org/documentation/usage/camera/installing.md
+
+## GPIO
+http://wiringpi.com/
+
+gpio -g mode 4 output
+gpio -g blink 4
+or
+gpio -g write 4 1 (to turn it on)
+gpio -g write 4 0 (to turn it off)

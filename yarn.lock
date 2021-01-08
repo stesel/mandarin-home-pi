@@ -5750,14 +5750,6 @@ envinfo@^7.3.1:
   resolved "https://registry.yarnpkg.com/envinfo/-/envinfo-7.7.3.tgz#4b2d8622e3e7366afb8091b23ed95569ea0208cc"
   integrity sha512-46+j5QxbPWza0PB1i15nZx0xQ4I/EfQxg9J8Had3b408SV63nEtor2e+oiY63amTo9KTuh2a3XLObNwduxYwwA==
 
-epoll@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/epoll/-/epoll-4.0.0.tgz#60a7750bcb7ad8a796fb6689308e5b5c53b6aa1b"
-  integrity sha512-dENZbykco5w/vsFHuhD/5zla9VHm3htP1ROoX9MCc6L/7LVqGPFfcGS/g+/+pQLUclKw4uR9HnaZmsZ6fi5n+Q==
-  dependencies:
-    bindings "^1.5.0"
-    nan "^2.14.1"
-
 err-code@^1.0.0:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/err-code/-/err-code-1.1.2.tgz#06e0116d3028f6aef4806849eb0ea6a748ae6960"
@@ -9095,11 +9087,6 @@ lodash.clonedeep@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
   integrity sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=
 
-lodash.debounce@^4.0.8:
-  version "4.0.8"
-  resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
-  integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
-
 lodash.flattendeep@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/lodash.flattendeep/-/lodash.flattendeep-4.4.0.tgz#fb030917f86a3134e5bc9bec0d69e0013ddfedb2"
@@ -9758,7 +9745,7 @@ mz@^2.5.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nan@^2.12.1, nan@^2.14.1:
+nan@^2.12.1:
   version "2.14.2"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.2.tgz#f5376400695168f4cc694ac9393d0c9585eeea19"
   integrity sha512-M2ufzIiINKCuDfBSAUr1vWQ+vuVcA9kqx8JJUsbQi6yf1uGRyb7HfpdfUr5qLXf3B/t8dPvcjhKMmlfnP47EzQ==
@@ -10289,14 +10276,6 @@ onetime@^5.1.0:
   integrity sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==
   dependencies:
     mimic-fn "^2.1.0"
-
-onoff@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/onoff/-/onoff-6.0.1.tgz#68ecaece4a4b4663fd59d72544dfec556d460ddd"
-  integrity sha512-lqnVyUiWLbb4T6sWTaOeCJn682EPyxaTyfJ5bP5LiTa0KMDlVPQR0ngVgzV3SkRkd0JnNxPvwTNj7QVvZTZsAw==
-  dependencies:
-    epoll "^4.0.0"
-    lodash.debounce "^4.0.8"
 
 open@^7.0.2:
   version "7.3.0"

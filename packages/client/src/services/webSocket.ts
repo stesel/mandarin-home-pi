@@ -175,6 +175,9 @@ export const registerWS = () => {
 
     reaction(() => ui.isShotOpen.get(), isOpen => {
         if (isOpen) {
+            runInAction(() => {
+                ui.shotBase64.set("");
+            });
             sendMessage(takeShotRequest());
         }
     });

@@ -1,5 +1,18 @@
-.shotImage {
+.shotImageContainer {
     width: 85vw;
     height: 50vh;
+}
+
+.shotImage {
+    width: 100%;
+    height: 100%;
     object-fit: contain;
+}
+
+.waitImage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
