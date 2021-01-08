@@ -30,6 +30,7 @@ export function saveMandarinShotToFile(image: string) {
     writeFile(
         path.join(".", "mandarin-pi-shots", `${new Date().toISOString()}.jpg`),
         image,
+        { encoding: "binary" },
         error => !!error && console.warn("Failed to write image", JSON.stringify(error.message)),
     );
 }
