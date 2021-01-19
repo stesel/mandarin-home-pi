@@ -12,8 +12,8 @@
 
 ## Set Pi env
 ```
-export ENV_VAR="value" >> /etc/profile
-source /etc/profile
+export ENV_VAR="value" >> ~/.bashrc
+source ~/.bashrc
 echo ENV_VAR
 ```
 
@@ -21,7 +21,11 @@ echo ENV_VAR
 ```
 wget -O mandarin-home-pi.js url/mandarin-home-pi.js --show-progress
 pm2 start ./mandarin-home-pi.js
+pm2 startup systemd
 pm2 save
+
+#reload env vars
+pm2 reload all --update-env
 ```
 
 ## Find Pi in local network

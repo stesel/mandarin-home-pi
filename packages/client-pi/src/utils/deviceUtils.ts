@@ -45,7 +45,7 @@ const cameraExecOptions = { encoding: "binary", maxBuffer: cameraBuffer };
 
 export async function getCameraShot() {
     return await execute(
-        "raspistill --nopreview --width 640 --height 480 --output -",
+        "raspistill --nopreview --width 480 --height 640 --output -",
         cameraExecOptions,
     );
 }
