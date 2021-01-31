@@ -6,6 +6,7 @@ import { pumping } from "../store/pumping";
 import {
     AuthorizedMessage,
     AuthorizeMessage,
+    createClientPingPong,
     IncomingPiMessage,
     MANDARIN_HOME_PI_PARAM,
     OutgoingPiMessage,
@@ -19,12 +20,11 @@ import {
     updateLatency,
     updateServerConnected,
 } from "../store/connection";
-import { createPingPong } from "./pingPong";
 import WebSocket, { MessageEvent } from "ws";
 import { requestCameraShot } from "./camera";
 import { camera } from "../store/camera";
 
-const { startPing, stopPing, handlePong } = createPingPong();
+const { startPing, stopPing, handlePong } = createClientPingPong();
 
 function serverUpdateStateHandler(message: ServerUpdateStateMessage) {
     runInAction(() => {

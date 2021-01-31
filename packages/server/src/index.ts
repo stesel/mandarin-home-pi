@@ -1,10 +1,12 @@
 import * as path from "path";
 import express from "express";
-import { registerWSServer } from "./servicers/webSocketServer";
-import { registerDB } from "./servicers/db";
-import { registerSchedule } from "./servicers/schedule";
+import { registerWSServer } from "./services/webSocketServer";
+import { registerDB } from "./services/db";
+import { registerSchedule } from "./services/schedule";
+import { registerPiEmulator } from "./services/piEmulation";
+import { DEFAULT_PORT } from "@mandarin-home-pi/common";
 
-const port = process.env.PORT || process.env.PORT_PI || 3000;
+const port = process.env.PORT || DEFAULT_PORT;
 
 const app = express();
 
@@ -24,3 +26,4 @@ const server = app.listen(port, () => {
 registerDB();
 registerWSServer(server);
 registerSchedule();
+registerPiEmulator();

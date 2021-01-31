@@ -95,3 +95,4 @@ export type OutgoingClientMessage =
     | ClientTakeShotMessage;
 
 export const MANDARIN_HOME_PI_PARAM = "mandarinHomePi";
+export const DEFAULT_PORT = 3000;

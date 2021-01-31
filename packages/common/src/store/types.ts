@@ -10,6 +10,7 @@ export interface ConnectionStore {
     isServerConnected: IObservableValue<boolean>;
     isPiConnected: IObservableValue<boolean>;
     connectionLatency: IObservableValue<number>;
+    visitors: IObservableValue<number>;
 }
 
 export interface PumpingStore {

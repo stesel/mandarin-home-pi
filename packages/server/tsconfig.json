@@ -20,7 +20,7 @@
       "@mandarin-home-pi/common/*": ["../common/src/*"]
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/env.d.ts"],
   "exclude": [
     "node_modules"
   ]

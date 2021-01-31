@@ -75,6 +75,7 @@ export function registerSchedule() {
             scheduleTimeout = setTimeout(() => {
                 if (getIsNextTimeApproached(repeat, startTime, lastTime)) {
                     runInAction(() => {
+                        console.log("SCHEDULE PUMPING STARTED:", repeat, startTime);
                         pumping.isPumping.set(true);
                     });
                 } else {
@@ -93,7 +94,7 @@ export function registerSchedule() {
     });
 
     reaction(() => pumping.isPumping.get(), isPumping => {
-        console.warn("isPumping", isPumping, Date.now());
+        console.warn("SCHEDULE: isPumping", isPumping, Date.now());
         if (isPumping) {
             runInAction(() => {
                 pumping.lastTime.set(Date.now());
@@ -109,6 +110,7 @@ export function registerSchedule() {
         if (isPumping) {
             pumpingTimeout = setTimeout(() => {
                 runInAction(() => {
+                    console.warn("SCHEDULE PUMPING AUTO-STOP:", Date.now());
                     pumping.isPumping.set(false);
                 });
             }, PUMPING_TIMEOUT);

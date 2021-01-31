@@ -97,7 +97,8 @@ function serverSendShotMessage(base64: string): ServerSendShotMessage {
 }
 
 function clientAuthorize(message: AuthorizeMessage, client: Client) {
-    const secret = process.env.SECRET_PHRASE_PI || "test";
+    const isPi = client === piClient;
+    const secret = isPi ? process.env.SECRET_PHRASE_PI : process.env.SECRET_PHRASE_CLIENT;
 
     const authorized = message.payload.password === secret;
     client.authorized = authorized;
@@ -217,6 +218,11 @@ export function registerWSServer(server: Server) {
             sendMessageToAll(
                 updateStateMessage(pumping, connection),
             );
+        } else {
+            runInAction(() => {
+                const visitors = connection.visitors.get();
+                connection.visitors.set(visitors + 1);
+            });
         }
 
         addClient(client);

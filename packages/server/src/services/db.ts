@@ -1,4 +1,5 @@
 import { Client, query as q } from "faunadb";
+import { connection } from "../store/connection";
 import { pumping } from "../store/pumping";
 import {
     reaction,
@@ -9,7 +10,7 @@ import {
     StartTimeType,
 } from "@mandarin-home-pi/common";
 
-const collectionName = "schedule";
+const collectionName = "settings";
 const refId = "181388642581742080";
 
 interface DBData {
@@ -17,6 +18,7 @@ interface DBData {
         repeat: RepeatType;
         startTime: StartTimeType;
         lastTime: number;
+        visitors: number;
     }
 }
 
@@ -26,6 +28,7 @@ function getData(): DBData {
             repeat: pumping.repeat.get(),
             startTime: pumping.startTime.get(),
             lastTime: pumping.lastTime.get(),
+            visitors: connection.visitors.get(),
         },
     };
 }
@@ -38,28 +41,24 @@ export function registerDB() {
         keepAlive: false,
     });
 
-    const lastData: DBData = {
-        data: {
-            repeat: pumping.repeat.get(),
-            startTime: pumping.startTime.get(),
-            lastTime: pumping.lastTime.get(),
-        },
-    };
+    const lastData: DBData = getData();
 
     client.query(
         q.Get(q.Ref(q.Collection(collectionName), refId))
     ).then(response => {
-        console.log("DB is got")
         runInAction(() => {
             const { data } = (response as DBData);
+            console.log("DB is got: ", JSON.stringify(data));
 
-            lastData.data.repeat = data.repeat;
-            lastData.data.startTime = data.startTime;
-            lastData.data.lastTime = data.lastTime;
+            lastData.data.repeat = data.repeat || lastData.data.repeat;
+            lastData.data.startTime = data.startTime || lastData.data.startTime;
+            lastData.data.lastTime = data.lastTime || lastData.data.lastTime;
+            lastData.data.visitors = data.visitors || lastData.data.visitors;
 
             pumping.repeat.set(data.repeat);
             pumping.startTime.set(data.startTime);
             pumping.lastTime.set(data.lastTime);
+            connection.visitors.set(data.visitors);
         });
     }).catch(error => {
         if (error.name === "NotFound") {
@@ -69,9 +68,9 @@ export function registerDB() {
                     getData(),
                 ),
             ).then(() => console.log("DB created"))
-            .catch(error => console.error("Error: %s", error));
+            .catch(error => console.error("DB Error: %s", error));
         } else  {
-            console.error("Error: %s", error);
+            console.error("DB Error: %s", error);
         }
     });
 
@@ -81,6 +80,7 @@ export function registerDB() {
         if (data.repeat === lastData.data.repeat
             && data.startTime === lastData.data.startTime
             && data.lastTime === lastData.data.lastTime
+            && data.visitors === lastData.data.visitors
         ) {
             return;
         }
@@ -88,6 +88,7 @@ export function registerDB() {
         lastData.data.repeat = data.repeat;
         lastData.data.startTime = data.startTime;
         lastData.data.lastTime = data.lastTime;
+        lastData.data.visitors = data.visitors;
 
         client.query(
             q.Update(
@@ -95,10 +96,11 @@ export function registerDB() {
                 getData(),
             )
         ).then(() => console.log("DB updated"))
-        .catch((error) => console.error("Error: %s", error))
+        .catch((error) => console.error("DB Error: %s", error))
     }
 
     reaction(() => pumping.repeat.get(), () => updateDB());
     reaction(() => pumping.startTime.get(), () => updateDB());
     reaction(() => pumping.lastTime.get(), () => updateDB());
+    reaction(() => connection.visitors.get(), () => updateDB());
 }

@@ -1,7 +1,7 @@
 import {
     PingMessage,
     PongMessage,
-} from "@mandarin-home-pi/common";
+} from "../messages/types";
 
 function pingRequest(): PingMessage {
     return {
@@ -22,7 +22,7 @@ interface PingPong {
     handlePong: HandlePong;
 }
 
-export function createPingPong(interval = 10000): PingPong {
+export function createClientPingPong(interval = 10000): PingPong {
     let pingIntervalId: NodeJS.Timeout;
     let lastPingTime = Date.now();
 

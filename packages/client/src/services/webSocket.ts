@@ -8,6 +8,7 @@ import {
     AuthorizeMessage,
     ClientTakeShotMessage,
     ClientUpdateStateMessage,
+    createClientPingPong,
     IncomingClientMessage,
     OutgoingClientMessage,
     PumpingStore,
@@ -19,10 +20,9 @@ import {
     updateLatency,
     updateServerConnected,
 } from "../store/connection";
-import { createPingPong } from "./pingPong";
 import { ui } from "../store/ui";
 
-const { startPing, stopPing, handlePong } = createPingPong();
+const { startPing, stopPing, handlePong } = createClientPingPong();
 
 function serverUpdateStateHandler(message: ServerUpdateStateMessage) {
     runInAction(() => {
