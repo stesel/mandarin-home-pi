@@ -10,7 +10,6 @@ export interface ConnectionStore {
     isServerConnected: IObservableValue<boolean>;
     isPiConnected: IObservableValue<boolean>;
     connectionLatency: IObservableValue<number>;
-    visitors: IObservableValue<number>;
 }
 
 export interface PumpingStore {
@@ -25,6 +24,13 @@ export interface UIStore {
     isScheduleOpen: IObservableValue<boolean>;
     isShotOpen: IObservableValue<boolean>;
     shotBase64: IObservableValue<string>;
+}
+
+export interface StatisticsStore {
+    visitors: IObservableValue<number>,
+    authorizedVisitors: IObservableValue<number>,
+    pumpRequests: IObservableValue<number>,
+    shotRequests: IObservableValue<number>,
 }
 
 export interface Stores {

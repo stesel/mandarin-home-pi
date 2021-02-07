@@ -5,12 +5,14 @@ import {
 import { connection } from "../store/connection";
 import { pumping } from "../store/pumping";
 import { Server } from "http";
+import { statistics } from "../store/statistics";
 import {
     AuthorizedMessage,
     AuthorizeMessage,
     ClientUpdateStateMessage,
     ConnectionStore,
     IncomingServerMessage,
+    incrementObservableNumber,
     MANDARIN_HOME_PI_PARAM,
     OutgoingServerMessage,
     PingMessage,
@@ -110,6 +112,10 @@ function clientAuthorize(message: AuthorizeMessage, client: Client) {
     if (authorized) {
         sendMessage(client, updateStateMessage(pumping, connection));
     }
+
+    if (!isPi && authorized) {
+        incrementObservableNumber(statistics.authorizedVisitors);
+    }
 }
 
 function pingHandler(message: PingMessage, client: Client) {
@@ -120,6 +126,9 @@ function clientUpdateStateHandler(message: ClientUpdateStateMessage) {
     runInAction(() => {
         if (pumping.isPumping.get() !== message.payload.isPumping) {
             pumping.isPumping.set(message.payload.isPumping);
+            if (message.payload.isPumping) {
+                incrementObservableNumber(statistics.pumpRequests);
+            }
         }
         if(pumping.repeat.get() !== message.payload.repeat) {
             pumping.repeat.set(message.payload.repeat);
@@ -137,6 +146,7 @@ function clientTakeShotHandler() {
     if (piClient) {
         sendMessage(piClient, takeShotMessage());
     }
+    incrementObservableNumber(statistics.shotRequests);
 }
 
 function piSendShotHandler(message: PiSendShotMessage) {
@@ -219,10 +229,7 @@ export function registerWSServer(server: Server) {
                 updateStateMessage(pumping, connection),
             );
         } else {
-            runInAction(() => {
-                const visitors = connection.visitors.get();
-                connection.visitors.set(visitors + 1);
-            });
+            incrementObservableNumber(statistics.visitors);
         }
 
         addClient(client);
