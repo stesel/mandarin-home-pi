@@ -3,19 +3,42 @@ import {
     executeSync,
 } from "./deviceUtils";
 
-export function createGpio(pin: number, mode: "input" | "output") {
+export enum GpioPin {
+    Pumper = 4,
+}
+
+export enum GpioMode {
+    Input = "input",
+    Output = "output",
+}
+
+export enum GpioState {
+    Off = 0,
+    On = 1,
+}
+
+export type GpioStatus = `${GpioState}`;
+
+export interface Gpio {
+    setup(): Promise<GpioStatus>;
+    write(value: GpioState): Promise<GpioStatus>;
+    writeSync(value: GpioState): void;
+    read(): void;
+}
+
+export function createGpio(pin: GpioPin, mode: GpioMode): Gpio {
     return {
-        setup() {
-            return execute(`gpio -g mode ${pin} ${mode} && gpio -g read ${pin}`);
+        setup(): Promise<GpioStatus> {
+            return execute<GpioStatus>(`gpio -g mode ${pin} ${mode} && gpio -g read ${pin}`);
         },
-        write(value: 0 | 1) {
-            return execute(`gpio -g write ${pin} ${value} && gpio -g read ${pin}`);
+        write(value: GpioState): Promise<GpioStatus> {
+            return execute<GpioStatus>(`gpio -g write ${pin} ${value} && gpio -g read ${pin}`);
         },
-        writeSync(value: 0 | 1) {
+        writeSync(value: GpioState) {
             executeSync(`gpio -g write ${pin} ${value}`);
         },
-        read() {
-            return execute(`gpio -g read ${pin}`)
+        read(): Promise<GpioStatus> {
+            return execute<GpioStatus>(`gpio -g read ${pin}`)
         },
     }
 }

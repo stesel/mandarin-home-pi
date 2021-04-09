@@ -1,7 +1,12 @@
 import { reaction } from "mobx";
 import { pumping } from "../store/pumping";
 import { isMandarinPiDevice } from "../utils/deviceUtils";
-import { createGpio } from "../utils/gpio";
+import {
+    createGpio,
+    GpioMode,
+    GpioPin,
+    GpioState,
+} from "../utils/gpio";
 
 export function registerPumper() {
     if (!isMandarinPiDevice()) {
@@ -9,10 +14,10 @@ export function registerPumper() {
         return;
     }
 
-    const pumper = createGpio(4, "output");
+    const pumper = createGpio(GpioPin.Pumper, GpioMode.Output);
 
     const writePamper = (value: boolean) => {
-        pumper.write(value ? 1 : 0)
+        pumper.write(value ? GpioState.On : GpioState.Off)
             .then(() => console.log("Pumper state changed:", value))
             .catch(reason => console.log("Pumper state change error:", reason));
     };

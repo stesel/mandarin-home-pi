@@ -6,13 +6,13 @@ import {
 import { writeFile } from "fs";
 import * as path from "path";
 
-export function execute(command: string, options: ExecOptions = {}) {
-    return new Promise<string>((resolve, reject) => {
+export function execute<S extends string>(command: string, options: ExecOptions = {}) {
+    return new Promise<S>((resolve, reject) => {
         exec(command, options, (error, stdout, stderr) => {
             if (stderr || error) {
                 reject(stderr || error);
             }
-            resolve(stdout);
+            resolve(stdout as S);
         });
     });
 }
