@@ -1,6 +1,11 @@
 ![Node CI](https://github.com/stesel/mandarin-home-pi/workflows/Node%20CI/badge.svg?branch=master)
 # mandarin-home-pi
 
+[![mandarin home pi video](http://img.youtube.com/vi/7qVixwESHIk/0.jpg)](http://www.youtube.com/watch?v=7qVixwESHIk "mandarin home pi")
+
+[Demo](https://mandarin-home-test.herokuapp.com/)  
+*Password: 0000*
+
 ## Backend env
 `SECRET_PHRASE_CLIENT`
 `SECRET_PHRASE_PI`
