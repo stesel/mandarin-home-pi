@@ -23,7 +23,7 @@ export interface Gpio {
     setup(): Promise<GpioStatus>;
     write(value: GpioState): Promise<GpioStatus>;
     writeSync(value: GpioState): void;
-    read(): void;
+    read(): Promise<GpioStatus>
 }
 
 export function createGpio(pin: GpioPin, mode: GpioMode): Gpio {
