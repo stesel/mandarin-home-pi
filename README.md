@@ -57,3 +57,7 @@ gpio -g write 4 0 (to turn it off)
 ```
 wget -qO- https://getpm2.com/install.sh | bash
 ```
+
+### LICENSE
+
+[MIT License](LICENSE.md)
